@@ -29,6 +29,7 @@ export class MainHistoryComponent implements OnInit {
   cModelText: string = '';
   cControllerTxt: string = '';
   cRepositoryTxt: string = '';
+  cIdentificador:string='';
 
   ngOnInit(): void {
     this.obtenerListadoTablas();
@@ -60,6 +61,7 @@ export class MainHistoryComponent implements OnInit {
         this.templateCModel();
         this.templateCController();
         this.templateCRepository();
+        this.templateCIdenficador();
       }
     );
   }
@@ -150,7 +152,7 @@ export class MainHistoryComponent implements OnInit {
     this.angularServiceTxt += `\t){}\n\n`;
     //Obtener
     this.angularServiceTxt += `\tobtener${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}(id?:number){\n`;
-    this.angularServiceTxt += `\t\treturn this._http.post(environment.apiUrl+'[CAMBIAR_RUTA]',{id:id})\n`;
+    this.angularServiceTxt += `\t\treturn this._http.post(environment.apiUrl+'/api/${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}/Obtener',{id:id})\n`;
     this.angularServiceTxt += `\t\t.pipe(\n`;
     this.angularServiceTxt += `\t\t\tmap((response)=>{\n`;
     this.angularServiceTxt += `\t\t\t\treturn response;\n`;
@@ -162,7 +164,7 @@ export class MainHistoryComponent implements OnInit {
     this.angularServiceTxt += `\t}\n\n`;
     //Guardar
     this.angularServiceTxt += `\tguardar${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}(${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}model : ${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}Model){\n`;
-    this.angularServiceTxt += `\t\treturn this._http.post(environment.apiUrl+'[CAMBIAR_RUTA]',${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}model)\n`;
+    this.angularServiceTxt += `\t\treturn this._http.post(environment.apiUrl+'/api/${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}/Guardar',${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}model)\n`;
     this.angularServiceTxt += `\t\t.pipe(\n`;
     this.angularServiceTxt += `\t\t\tmap((response)=>{\n`;
     this.angularServiceTxt += `\t\t\t\treturn response;\n`;
@@ -225,7 +227,7 @@ export class MainHistoryComponent implements OnInit {
     this.cControllerTxt += `\t}\n`;
     //peticion get
     this.cControllerTxt += `\t[HttpPost("[action]")]\n`;
-    this.cControllerTxt += `\tpublic async Task<List<${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}Model>> Obtener([FromBody] ${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}Model model)\n`;
+    this.cControllerTxt += `\tpublic async Task<List<${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}Model>> Obtener([FromBody] IdentificadorModel model)\n`;
     this.cControllerTxt += `\t{\n`;
     this.cControllerTxt += `\t\treturn await _repo.ObtenerTodas${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}(model);\n`;
     this.cControllerTxt += `\t}\n`;
@@ -251,14 +253,14 @@ export class MainHistoryComponent implements OnInit {
     this.cRepositoryTxt+=`\t}\n`
 
     //los metodo que vamos a utlizar para ir a los procedimientos
-    this.cRepositoryTxt+=`\tpublic async Task<<List<${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}Model>> Obtener(${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}Model model)\n`
+    this.cRepositoryTxt+=`\tpublic async Task<<List<${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}Model>> Obtener(IdentificadorModel model)\n`
     this.cRepositoryTxt+=`\t{\n`
     this.cRepositoryTxt+=`\t\tusing (SqlConnection sql=new SqlConnection(__connectionString))\n`
     this.cRepositoryTxt+=`\t\t{\n`
     this.cRepositoryTxt+=`\t\t\tusing (SqlCommand cmd=new SqlCommand("sp${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}_obtener",sql))\n`
     this.cRepositoryTxt+=`\t\t\t{\n`
     this.cRepositoryTxt+=`\t\t\t\tcmd.CommandType=System.Data.CommandType.StoredProcedure; \n`
-    this.cRepositoryTxt+=`\t\t\t\tcmd.Parameters.Add( new SqlParameter("@p_${this.camposTablaList.find((x) => x.ordinal_position == 1).column_name}",model.${this.capitalizarPalabra(this.camposTablaList.find((x) => x.ordinal_position == 1).column_name)}) ); \n`
+    this.cRepositoryTxt+=`\t\t\t\tcmd.Parameters.Add( new SqlParameter("@p_${this.camposTablaList.find((x) => x.ordinal_position == 1).column_name}",model.id) ); \n`
     this.cRepositoryTxt+=`\t\t\t\tvar response=new List<<${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}Model>>(); \n`
     this.cRepositoryTxt+=`\t\t\t\tawait sql.OpenAsync(); \n`
     this.cRepositoryTxt+=`\t\t\t\tusing (var reader=await cmd.ExecuteReaderAsync()) \n`
@@ -305,6 +307,12 @@ export class MainHistoryComponent implements OnInit {
 
     this.cRepositoryTxt+=`}\n`
 
+  }
+  templateCIdenficador(){
+    this.cIdentificador = '';
+    this.cIdentificador += `public class IdentificadorModel{\n`;
+   this.cIdentificador+=`\tpublic string id { get; set; } \n`;
+    this.cIdentificador += `}\n`;
   }
 
 
