@@ -87,8 +87,8 @@ export class MainHistoryComponent implements OnInit {
     this.storeProcedureTxt += `\t\tSELECT * FROM ${this.selectedInfoTabla.table_name}\n`;
     this.storeProcedureTxt += `END\n\n`;
     this.storeProcedureTxt += `CREATE PROCEDURE sp${this.capitalizarPalabra(this.selectedInfoTabla.table_name)}_guardar\n`;
-    this.storeProcedureTxt += `BEGIN\n`;
-    this.camposTablaList.forEach((campo) => {
+
+    this.camposTablaList.forEach((campo,index) => {
       this.storeProcedureTxt += `\t@p_${
         campo.column_name
       } AS ${campo.data_type.toUpperCase()}  ${
@@ -104,20 +104,22 @@ export class MainHistoryComponent implements OnInit {
         campo.data_type == MSSQLType.VARCHAR
           ? '= NULL'
           : ''
-      }  \n`;
+      } ${this.camposTablaList.length == index + 1 ? '' : ','}\n`;
     });
-    this.storeProcedureTxt += `\n\t IF @p_id=-1\n`;
+    this.storeProcedureTxt += `AS\n`;
+    this.storeProcedureTxt += `BEGIN\n`;
+    this.storeProcedureTxt += `\n\t IF (@p_${this.camposTablaList.find((x) => x.ordinal_position == 1).column_name}=-1)\n`;
     this.storeProcedureTxt += `\tBEGIN\n`;
     this.storeProcedureTxt += `\t\tINSERT INTO ${this.selectedInfoTabla.nombreTabla} (\n`;
-    this.camposTablaList.forEach((campo) => {
+    this.camposTablaList.forEach((campo,index) => {
       if (campo.ordinal_position != 1) {
-        this.storeProcedureTxt += `\t\t ${campo.column_name} \n`;
+        this.storeProcedureTxt += `\t\t ${campo.column_name} ${this.camposTablaList.length == index + 1 ? '' : ','}\n`;
       }
     });
     this.storeProcedureTxt += `\t\t) VALUES (\n`;
-    this.camposTablaList.forEach((campo) => {
+    this.camposTablaList.forEach((campo,index) => {
       if (campo.ordinal_position != 1) {
-        this.storeProcedureTxt += `\t\t @p_${campo.column_name} \n`;
+        this.storeProcedureTxt += `\t\t @p_${campo.column_name}${this.camposTablaList.length == index + 1 ? '' : ','} \n`;
       }
     });
     this.storeProcedureTxt += `\t\t)\n`;
@@ -132,7 +134,7 @@ export class MainHistoryComponent implements OnInit {
         }${this.camposTablaList.length == index + 1 ? '' : ','}\n`;
       }
     });
-    this.storeProcedureTxt += `\t\tWHERE id=@p_${
+    this.storeProcedureTxt += `\t\tWHERE ${this.camposTablaList.find((x) => x.ordinal_position == 1).column_name}=@p_${
       this.camposTablaList.find((x) => x.ordinal_position == 1).column_name
     }\n`;
     this.storeProcedureTxt += `\tEND\n`;
