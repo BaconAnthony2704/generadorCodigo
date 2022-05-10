@@ -291,6 +291,18 @@ export class MainHistoryComponent implements OnInit {
     this.cRepositoryTxt+=`\t\t}\n`
     this.cRepositoryTxt+=`\t}\n`
 
+
+    //maptovalue
+    this.cRepositoryTxt+=`\tprivate ${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}Model MapToValue${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}(SqlDataReader reader)\n`
+    this.cRepositoryTxt+=`\t{\n`
+    this.cRepositoryTxt+=`\t\treturn new ${this.capitalizarPalabra(this.selectedInfoTabla.nombreTabla)}Model  \n`
+    this.cRepositoryTxt+=`\t\t{\n`
+    this.camposTablaList.forEach((campo,i)=>{
+      this.cRepositoryTxt+=`\t\t\t${this.capitalizarPalabra(campo.column_name)} = ${campo.data_type==MSSQLType.VARCHAR?"reader['"+(campo.column_name)+"'].ToString()"+(i+1<this.camposTablaList.length?",":""):(campo.data_type==MSSQLType.BIGINT || campo.data_type==MSSQLType.INT?"Convert.ToInt32(reader['"+(campo.column_name)+"'])"+(i+1<this.camposTablaList.length?",":""):(campo.data_type==MSSQLType.NUMERIC || campo.data_type==MSSQLType.FLOAT || campo.data_type==MSSQLType.DECIMAL?"Convert.ToDouble(reader['"+(campo.column_name)+"'])"+(i+1<this.camposTablaList.length?",":""):(campo.data_type==MSSQLType.DATETIME?"Convert.ToDateTime(reader['"+campo.column_name+"'])"+(i+1<this.camposTablaList.length?",":""):(campo.data_type==MSSQLType.BIT?"Convert.ToBoolean(reader['"+campo.column_name+"'])"+(i+1<this.camposTablaList.length?",":""):""))))}\n`
+    })
+    this.cRepositoryTxt+=`\t\t}\n`
+    this.cRepositoryTxt+=`\t}\n`
+
     this.cRepositoryTxt+=`}\n`
 
   }
