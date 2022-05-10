@@ -1,0 +1,52 @@
+<ngx-spinner
+  bdColor="rgba(51,51,51,0.8)"
+  size="medium"
+  color="#fff"
+  type="ball-scale-multiple"
+>
+  <p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <p-table [value]="tablaInfoList" selectionMode="single" [(selection)]="selectedInfoTabla" dataKey="table_name" (onRowSelect)="obtenerCamposTablas($event.data)">
+        <ng-template pTemplate="header">
+            <tr >
+
+                <th>Nombre</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+            <tr [pSelectableRow]="rowData">
+
+                <td>{{rowData.table_name}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    </div>
+    <div class="col-md-8">
+      <p-tabView>
+        <p-tabPanel header="Store Procedure">
+          <textarea pInputTextarea [(ngModel)]="storeProcedureTxt" [readOnly]="true"  [rows]="5" [cols]="30" style="width: 100%; height:815px;"></textarea>
+        </p-tabPanel>
+        <p-tabPanel header="Angular service" >
+          <textarea pInputTextarea [(ngModel)]="angularServiceTxt" [readOnly]="true"   [rows]="5" [cols]="30"  style="width: 100%;  height:815px;"></textarea>
+        </p-tabPanel>
+        <p-tabPanel header="Angular Model">
+          <textarea pInputTextarea [(ngModel)]="angularModelTxt" [readOnly]="true" style="width: 100%; height:815px;"></textarea>
+        </p-tabPanel>
+        <p-tabPanel header="C# Model">
+          <textarea pInputTextarea [(ngModel)]="cModelText" [readOnly]="true"  style="width: 100%; height:815px;"></textarea>
+        </p-tabPanel>
+        <p-tabPanel header="C# Controller">
+          <textarea pInputTextarea [(ngModel)]="cControllerTxt" [readOnly]="true" style="width: 100%; height:815px;"></textarea>
+        </p-tabPanel>
+        <p-tabPanel header="C# Repository">
+          <textarea pInputTextarea [(ngModel)]="cRepositoryTxt" [readOnly]="true"  style="width: 100%; height:815px;"></textarea>
+        </p-tabPanel>
+    </p-tabView>
+    </div>
+
+  </div>
+
+</div>
